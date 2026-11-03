@@ -1,0 +1,31 @@
+{
+  "name": "healthconnect-server",
+  "version": "1.0.0",
+  "description": "HealthConnect Backend API - Connecting Communities Through Healthcare & Social Impact",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "healthconnect",
+    "social-development",
+    "events",
+    "express",
+    "mongodb"
+  ],
+  "author": "HealthConnect Team",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
