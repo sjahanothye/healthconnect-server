@@ -486,3 +486,4 @@ router.delete('/joined/:joinId', verifyToken, async (req, res) => {
 });
 
 module.exports = router;
+
