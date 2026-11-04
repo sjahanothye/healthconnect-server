@@ -312,6 +312,10 @@ router.get('/me', verifyToken, async (req, res) => {
         name: user.name,
         email: user.email,
         photoURL: user.photoURL,
+        phone: user.phone || '',
+        bloodGroup: user.bloodGroup || '',
+        institution: user.institution || '',
+        city: user.city || '',
         createdAt: user.createdAt,
       },
     });
@@ -324,7 +328,7 @@ router.get('/me', verifyToken, async (req, res) => {
 // 5. Update Profile (Protected - Optional Challenge requirement)
 router.put('/profile', verifyToken, async (req, res) => {
   try {
-    const { name, photoURL } = req.body;
+    const { name, photoURL, phone, bloodGroup, institution, city } = req.body;
     if (!name) {
       return res.status(400).json({ success: false, message: 'Name cannot be empty' });
     }
@@ -340,6 +344,18 @@ router.put('/profile', verifyToken, async (req, res) => {
     };
     if (photoURL !== undefined) {
       updatedFields.photoURL = photoURL ? photoURL.trim() : '';
+    }
+    if (phone !== undefined) {
+      updatedFields.phone = phone ? phone.trim() : '';
+    }
+    if (bloodGroup !== undefined) {
+      updatedFields.bloodGroup = bloodGroup ? bloodGroup.trim() : '';
+    }
+    if (institution !== undefined) {
+      updatedFields.institution = institution ? institution.trim() : '';
+    }
+    if (city !== undefined) {
+      updatedFields.city = city ? city.trim() : '';
     }
 
     await usersCollection.updateOne(
@@ -372,6 +388,10 @@ router.put('/profile', verifyToken, async (req, res) => {
         name: updatedUser.name,
         email: updatedUser.email,
         photoURL: updatedUser.photoURL,
+        phone: updatedUser.phone || '',
+        bloodGroup: updatedUser.bloodGroup || '',
+        institution: updatedUser.institution || '',
+        city: updatedUser.city || '',
       },
     });
   } catch (error) {
