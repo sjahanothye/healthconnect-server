@@ -338,8 +338,8 @@ router.put('/profile', verifyToken, async (req, res) => {
     const updatedFields = {
       name: name.trim(),
     };
-    if (photoURL) {
-      updatedFields.photoURL = photoURL.trim();
+    if (photoURL !== undefined) {
+      updatedFields.photoURL = photoURL ? photoURL.trim() : '';
     }
 
     await usersCollection.updateOne(
