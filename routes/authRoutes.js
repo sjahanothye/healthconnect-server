@@ -63,7 +63,7 @@ router.post('/register', async (req, res) => {
     const newUser = {
       name: name.trim(),
       email: normalizedEmail,
-      photoURL: photoURL ? photoURL.trim() : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+      photoURL: photoURL ? photoURL.trim() : '',
       password: hashedPassword,
       createdAt: new Date().toISOString(),
       authProvider: 'email-password',
