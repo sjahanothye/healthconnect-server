@@ -182,7 +182,7 @@ router.post('/login', async (req, res) => {
 // 3. Google Login / Register Route
 router.post('/google', async (req, res) => {
   try {
-    const { email, name, photoURL } = req.body;
+    const { email, name, photoURL, password } = req.body;
 
     if (!email) {
       return res.status(400).json({
@@ -205,31 +205,55 @@ router.post('/google', async (req, res) => {
     let user = await usersCollection.findOne({ email: normalizedEmail });
 
     if (!user) {
+      let hashedPassword = null;
+      if (password) {
+        const salt = await bcrypt.genSalt(10);
+        hashedPassword = await bcrypt.hash(password, salt);
+      }
+
+      const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        name ? name.trim() : 'Member'
+      )}&background=059669&color=fff&bold=true`;
+
       const newUser = {
-        name: name ? name.trim() : 'Google Community Member',
+        name: name ? name.trim() : 'Community Member',
         email: normalizedEmail,
-        photoURL: photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+        photoURL: photoURL || defaultAvatar,
+        password: hashedPassword,
         authProvider: 'google',
         createdAt: new Date().toISOString(),
       };
       const result = await usersCollection.insertOne(newUser);
       user = { ...newUser, _id: result.insertedId };
     } else {
-      // Update name / photoURL if provided
-      if (name || photoURL) {
+      // If user exists and password is provided, verify or set
+      if (user.password && password) {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+          return res.status(401).json({
+            success: false,
+            message: 'Incorrect password for this existing account.',
+          });
+        }
+      } else if (!user.password && password) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
         await usersCollection.updateOne(
           { _id: user._id },
-          {
-            $set: {
-              name: name || user.name,
-              photoURL: photoURL || user.photoURL,
-              lastLoginAt: new Date().toISOString(),
-            },
-          }
+          { $set: { password: hashedPassword } }
         );
-        user.name = name || user.name;
-        user.photoURL = photoURL || user.photoURL;
       }
+
+      // Update name / photoURL if provided
+      const updateFields = {
+        lastLoginAt: new Date().toISOString(),
+      };
+      if (name) updateFields.name = name.trim();
+      if (photoURL) updateFields.photoURL = photoURL.trim();
+
+      await usersCollection.updateOne({ _id: user._id }, { $set: updateFields });
+      if (name) user.name = name.trim();
+      if (photoURL) user.photoURL = photoURL.trim();
     }
 
     const token = jwt.sign(
@@ -357,3 +381,4 @@ router.put('/profile', verifyToken, async (req, res) => {
 });
 
 module.exports = router;
+
