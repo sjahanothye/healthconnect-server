@@ -1,6 +1,7 @@
 # HealthConnect Server API
 
-> **Connecting Communities Through Healthcare & Social Impact**
+> **Connecting Communities Through Healthcare & Social Impact**  
+> Client Repository: [https://github.com/sjahanothye/healthconnect-client](https://github.com/sjahanothye/healthconnect-client)
 
 Backend API service for HealthConnect, built with **Express.js**, **MongoDB**, and **JWT Authentication**.
 
