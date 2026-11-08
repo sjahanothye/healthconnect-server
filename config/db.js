@@ -158,7 +158,7 @@ const connectDB = async () => {
   const uri = process.env.MONGODB_URI;
   const dbName = process.env.DB_NAME || 'healthconnect_db';
 
-  if (!uri || uri.includes('localhost:27017') || uri.includes('<username>')) {
+  if (!uri || uri.includes('<username>')) {
     console.log('[HealthConnect] Running with In-Memory fallback database (Fully operational for testing).');
     console.log('[HealthConnect] Tip: To connect to cloud MongoDB, add your Atlas URI to server/.env');
     return null;
@@ -171,15 +171,16 @@ const connectDB = async () => {
         strict: true,
         deprecationErrors: true,
       },
+      serverSelectionTimeoutMS: 4000,
     });
 
     await client.connect();
     db = client.db(dbName);
     isConnected = true;
-    console.log(`[HealthConnect] Successfully connected to MongoDB Atlas database: ${dbName}`);
+    console.log(`[HealthConnect] Successfully connected to MongoDB database: ${dbName}`);
     return db;
   } catch (error) {
-    console.warn(`[HealthConnect] MongoDB Atlas connection error: ${error.message}`);
+    console.warn(`[HealthConnect] MongoDB connection notice (${error.message}).`);
     console.warn('[HealthConnect] Running with In-Memory database fallback (API is still 100% active).');
     return null;
   }
